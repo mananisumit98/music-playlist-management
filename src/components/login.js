@@ -68,77 +68,79 @@ const Login = () => {
                         Sign in
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            {...register("email_id", {
-                                required: 'User name is required.',
-                                maxLength: {
-                                    value: 20,
-                                    message: 'User name should be at most 20 characters.',
-                                },
-                                minLength: {
-                                    value: 2,
-                                    message: 'User name should be at least 2 characters.',
-                                },
-                            })}
-                        />
-                        <Typography component="h1" variant="h5">
-                            {errors?.email_id?.type === 'required' && <span className="errormsg">{errors.email_id.message}</span>}
-                            {errors?.email_id?.type === 'minLength' && <span className="errormsg">{errors.email_id.message}</span>}
-                            {errors?.email_id?.type === 'maxLength' && <span className="errormsg">{errors.email_id.message}</span>}
-                        </Typography>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            {...register("password", {
-                                required: 'Password is required.',
-                                pattern: {
-                                    value: passwordRegx,
-                                    message: 'Password must have one letter, one number and one special character.',
-                                },
-                                maxLength: {
-                                    value: 12,
-                                    message: 'Password should be at most 12 characters.',
-                                },
-                                minLength: {
-                                    value: 6,
-                                    message: 'Password should be at least 6 characters.',
-                                },
-                            })}
-                        />
-                        <Typography component="h1" variant="h5">
-                            {errors?.password?.type === 'required' && <span className="errormsg">{errors.password.message}</span>}
-                            {errors?.password?.type === 'pattern' && <span className="errormsg">{errors.password.message}</span>}
-                            {errors?.password?.type === 'minLength' && <span className="errormsg">{errors.password.message}</span>}
-                            {errors?.password?.type === 'maxLength' && <span className="errormsg">{errors.password.message}</span>}
-                        </Typography>
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 1, mb: 0 }}
-                        >
-                            Sign In
-                        </Button>
-                        <Grid container justifyContent="center">
-                            <Grid item>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                    {...register("email_id", {
+                                        required: 'User name is required.',
+                                        maxLength: {
+                                            value: 20,
+                                            message: 'User name should be at most 20 characters.',
+                                        },
+                                        minLength: {
+                                            value: 2,
+                                            message: 'User name should be at least 2 characters.',
+                                        },
+                                    })}
+                                />
+                                <Typography component="h1" variant="h5">
+                                    {errors?.email_id?.type === 'required' && <span className="errormsg">{errors.email_id.message}</span>}
+                                    {errors?.email_id?.type === 'minLength' && <span className="errormsg">{errors.email_id.message}</span>}
+                                    {errors?.email_id?.type === 'maxLength' && <span className="errormsg">{errors.email_id.message}</span>}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    {...register("password", {
+                                        required: 'Password is required.',
+                                        pattern: {
+                                            value: passwordRegx,
+                                            message: 'Password must have one letter, one number and one special character.',
+                                        },
+                                        maxLength: {
+                                            value: 12,
+                                            message: 'Password should be at most 12 characters.',
+                                        },
+                                        minLength: {
+                                            value: 6,
+                                            message: 'Password should be at least 6 characters.',
+                                        },
+                                    })}
+                                />
+                                <Typography component="h1" variant="h5">
+                                    {errors?.password?.type === 'required' && <span className="errormsg">{errors.password.message}</span>}
+                                    {errors?.password?.type === 'pattern' && <span className="errormsg">{errors.password.message}</span>}
+                                    {errors?.password?.type === 'minLength' && <span className="errormsg">{errors.password.message}</span>}
+                                    {errors?.password?.type === 'maxLength' && <span className="errormsg">{errors.password.message}</span>}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 1, mb: 0 }}
+                                >
+                                    Sign In
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12} container justifyContent="center">
                                 <Link href={SIGNUP} variant="body2">
                                     Don't have an account? Sign Up
                                 </Link>
