@@ -268,7 +268,6 @@ const SearchSongs = () => {
                     :
                     <>
 
-
                         <Box style={{ margin: "1% 0", minWidth: "30%" }}>
                             <Grid item xs={12}>
                                 <TextField
@@ -306,7 +305,7 @@ const SearchSongs = () => {
                                     />) : (
                                     <Box sx={{ mt: 2 }}>
                                         <Typography variant="h5" component="h2" color="GrayText">
-                                            Please add songs in the playlist
+                                            Happy Searching !!! 😃
                                         </Typography>
                                     </Box>
                                 )}

@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { useParams } from "react-router-dom";
 import Navigation from "./Navigation";
 import { Modal } from "@mui/base";
+import Loader from "./Loader";
 
 /*
  - In the playlist component, the user can see the list of songs that where added into the individual playlist.
@@ -40,6 +41,7 @@ const Dashboard = () => {
     const [songs, setSongs] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentRow, setCurrentRow] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         fetchSongs();
@@ -48,6 +50,7 @@ const Dashboard = () => {
     // Songs are fetched using playlistID and displayed into the Datatable.
     const fetchSongs = async (data) => {
         try {
+            setIsLoading(true);
 
             let url = FETCH_SONGS.replace(":id", playlist_id);
 
@@ -58,7 +61,9 @@ const Dashboard = () => {
             } else {
                 setSongs([]);
             }
+            setIsLoading(false);
         } catch (error) {
+            setIsLoading(false);
             console.log("error ::", error);
             toast(error.message, "error");
         }
@@ -83,7 +88,6 @@ const Dashboard = () => {
     const handleClose = () => {
         setOpen(false);
         setCurrentRow([]);
-
     }
 
     const deleteSong = (row) => {
@@ -99,8 +103,9 @@ const Dashboard = () => {
                 confirmButtonText: "Yes, delete it!"
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    let url = DELETE_SONG.replace(":id", row._id);
 
+                    setIsLoading(true);
+                    let url = DELETE_SONG.replace(":id", row._id);
                     const response = await axios.delete(url);
 
                     if (response.data.success) {
@@ -114,10 +119,13 @@ const Dashboard = () => {
                         setSongs([]);
                     }
 
+                    setIsLoading(false);
+
                 }
             });
 
         } catch (error) {
+            setIsLoading(false);
             console.log("error ::", error);
             toast(error.message, "error");
         }
@@ -173,18 +181,21 @@ const Dashboard = () => {
 
                 <Navigation from="song" />
 
-                {songs.length > 0 ?
-                    <UserPlaylistTable
-                        type="songs"
-                        data={songs}
-                        columns={song_columns}
-                    /> :
-                    <Box sx={{ mt: 2 }}>
-                        <Typography variant="h5" component="h2" color="GrayText">
-                            Please add songs in the playlist
-                        </Typography>
-                    </Box>
-                }
+                {!isLoading ? (
+                    <>
+                        {songs.length > 0 ?
+                            <UserPlaylistTable
+                                type="songs"
+                                data={songs}
+                                columns={song_columns}
+                            /> :
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="h5" component="h2" color="GrayText">
+                                    Please add songs in the playlist
+                                </Typography>
+                            </Box>
+                        }</>
+                ) : <Loader />}
 
                 {/* Modal to shoe song details in the popup */}
                 <Modal open={open} onClose={handleClose}>
