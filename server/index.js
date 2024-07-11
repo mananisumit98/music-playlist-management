@@ -25,6 +25,9 @@ app.use("/songs", songRoutes);
 app.get("/", (req, res) => {
     return res.send({ message: "Server for Music System is Started" });
 });
+app.get("/vercel", (req, res) => {
+    return res.send({ message: "Express running on vercel" });
+});
 
 app.listen(PORT, () => {
     console.log("Server is running on port 8000");
