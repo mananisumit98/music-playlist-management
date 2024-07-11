@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:8000";
-// const API_URL = "https://music-system-server.vercel.app";
+// const API_URL = "http://localhost:8000";
+const API_URL = "https://music-system-server-sumit-mananis-projects.vercel.app";
 const USER_LOGIN = `${API_URL}/user/login`;
 const USER_REGISTRATION = `${API_URL}/user/register`;
 const NEW_PLAYLIST = `${API_URL}/playlist/create`;
