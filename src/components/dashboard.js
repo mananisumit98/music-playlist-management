@@ -263,14 +263,23 @@ const Dashboard = () => {
 
                 {/* The Table will only load if user has create atleadt 1 playlist in the past */}
                 <div>
-                    {!isLoading > 0 && (
+                    {!isLoading ? (
                         <>
                             {playlist.length ? (
-                                <UserPlaylistTable type="playlist" data={playlist} columns={playlist_columns} />
-                            ) : <Loader />
-                            }
+                                <UserPlaylistTable
+                                    type="playlist"
+                                    data={playlist}
+                                    columns={playlist_columns}
+                                />
+                            ) : (
+                                <Box sx={{ mt: 2 }}>
+                                    <Typography variant="h5" component="h2" color="GrayText">
+                                        No playlist found
+                                    </Typography>
+                                </Box>
+                            )}
                         </>
-                    )}
+                    ) : <Loader />}
                 </div>
 
 

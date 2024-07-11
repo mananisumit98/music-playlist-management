@@ -173,7 +173,18 @@ const Dashboard = () => {
 
                 <Navigation from="song" />
 
-                {songs.length > 0 && <UserPlaylistTable type="songs" data={songs} columns={song_columns} />}
+                {songs.length > 0 ?
+                    <UserPlaylistTable
+                        type="songs"
+                        data={songs}
+                        columns={song_columns}
+                    /> :
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="h5" component="h2" color="GrayText">
+                            Please add songs in the playlist
+                        </Typography>
+                    </Box>
+                }
 
                 {/* Modal to shoe song details in the popup */}
                 <Modal open={open} onClose={handleClose}>

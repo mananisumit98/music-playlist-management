@@ -297,9 +297,22 @@ const SearchSongs = () => {
                             </Grid>
                         </Box>
 
-                        {!isLoading ? (<>
-                            {tracks.length > 0 && <UserPlaylistTable data={tracks} columns={tracks_columns} />}
-                        </>) : <Loader />}
+                        {!isLoading ? (
+                            <>
+                                {tracks.length > 0 ? (
+                                    <UserPlaylistTable
+                                        data={tracks}
+                                        columns={tracks_columns}
+                                    />) : (
+                                    <Box sx={{ mt: 2 }}>
+                                        <Typography variant="h5" component="h2" color="GrayText">
+                                            Please add songs in the playlist
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </>
+                        ) : <Loader />
+                        }
 
                     </>
                 }
