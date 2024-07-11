@@ -10,7 +10,9 @@ import { DELETE_PLAYLIST, GET_PLAYLIST, NEW_PLAYLIST, UPDATE_PLAYLIST } from "..
 import UserPlaylistTable from "./playListTable";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { PLAYLIST, SEARCH } from "../utils/routes";
+import { PLAYLIST } from "../utils/routes";
+import Navigation from "./Navigation";
+import Loader from "./Loader";
 
 const Dashboard = () => {
 
@@ -22,6 +24,7 @@ const Dashboard = () => {
     const [playlist, setPlaylist] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false);
     const [updateId, setUpdateId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         fetchPlayList();
@@ -29,6 +32,8 @@ const Dashboard = () => {
 
     const onSubmit = async (data) => {
         try {
+
+            setIsLoading(true);
 
             const formData = {
                 name: data.playlist_name,
@@ -41,13 +46,20 @@ const Dashboard = () => {
                 // Update playlist
                 delete formData.user_id;
                 formData.id = updateId;
-                response = await axios.patch(UPDATE_PLAYLIST, formData);
+                response = await axios.patch(UPDATE_PLAYLIST, formData, {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("user_token")}`
+                    }
+                });
             } else {
                 // Create new playlist
-                response = await axios.post(NEW_PLAYLIST, formData);
+                response = await axios.post(NEW_PLAYLIST, formData, {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("user_token")}`
+                    }
+                });
             }
 
-            console.log("response ::::", response.data);
             if (response.data.success) {
                 refresh();
                 toast(response.data.message, "success");
@@ -57,6 +69,7 @@ const Dashboard = () => {
             }
         } catch (error) {
             reset();
+            setIsLoading(false);
             console.log("error ::", error);
             toast(error.message, "error");
         }
@@ -65,8 +78,13 @@ const Dashboard = () => {
         try {
 
             let url = GET_PLAYLIST.replace(":id", userDetails?._id);
+            setIsLoading(true);
 
-            const response = await axios.get(url);
+            const response = await axios.get(url, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("user_token")}`
+                }
+            });
 
             if (response.data.success) {
                 reset();
@@ -74,8 +92,10 @@ const Dashboard = () => {
             } else {
                 setPlaylist([]);
             }
+            setIsLoading(false);
         } catch (error) {
             console.log("error ::", error);
+            setIsLoading(false);
             toast(error.message, "error");
         }
     }
@@ -92,13 +112,12 @@ const Dashboard = () => {
             updatePlaylist(row);
         } else if (action === "delete") {
             deletePlaylist(row);
-        } else if(action === "view") {
+        } else if (action === "view") {
             navigate(PLAYLIST.replace(":id", row._id));
         }
     }
 
     const updatePlaylist = async (row) => {
-        console.log("row: ", row);
         setIsUpdate(true);
         setUpdateId(row._id);
         inputRef.current.focus();
@@ -118,9 +137,13 @@ const Dashboard = () => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     let url = DELETE_PLAYLIST.replace(":id", row._id);
+                    setIsLoading(true);
 
-                    const response = await axios.delete(url);
-                    console.log("response.data ::: ", response.data);
+                    const response = await axios.delete(url, {
+                        headers: {
+                            authorization: `Bearer ${localStorage.getItem("user_token")}`
+                        }
+                    });
 
                     if (response.data.success) {
                         refresh();
@@ -131,6 +154,7 @@ const Dashboard = () => {
                         });
                     } else {
                         setPlaylist([]);
+                        setIsLoading(false);
                     }
 
                 }
@@ -138,6 +162,7 @@ const Dashboard = () => {
 
         } catch (error) {
             console.log("error ::", error);
+            setIsLoading(false);
             toast(error.message, "error");
         }
     }
@@ -163,22 +188,22 @@ const Dashboard = () => {
             renderCell: (params) => (
                 <div>
                     <IconButton
+                        onClick={() => handleAdd(params.row, "view")}
+                        title="View playlist"
+                    >
+                        <RemoveRedEyeSharp className="action-icon" color="success" />
+                    </IconButton>
+                    <IconButton
                         onClick={() => handleAdd(params.row, "update")}
-                        title="Generate feedback"
+                        title="Update playlist"
                     >
                         <EditSharp className="action-icon" color="info" />
                     </IconButton>
                     <IconButton
                         onClick={() => handleAdd(params.row, "delete")}
-                        title="Generate feedback"
+                        title="Delete playlist"
                     >
                         <DeleteForeverSharp className="action-icon" color="error" />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => handleAdd(params.row, "view")}
-                        title="Generate feedback"
-                    >
-                        <RemoveRedEyeSharp className="action-icon" color="success" />
                     </IconButton>
                 </div>
             ),
@@ -188,7 +213,8 @@ const Dashboard = () => {
     return (
         <div className="App">
             <header className="App-header">
-                <Box style={{ margin: "1% 0" }}>
+                <Navigation from="dashboard" />
+                <Box style={{ margin: "1% 0", minWidth: "30%" }}>
                     <Grid item xs={12}>
                         <TextField
                             required
@@ -214,19 +240,20 @@ const Dashboard = () => {
                         >
                             {isUpdate ? "Update Playlist" : "Create Playlist"}
                         </Button>
-                        <Button
-                            type="button"
-                            fullWidth
-                            variant="contained"
-                            onClick={() => navigate(SEARCH)}
-                            sx={{ mt: 1, mb: 2 }}
-                        >
-                            Search Songs
-                        </Button>
                     </Grid>
                 </Box>
 
-                {playlist.length > 0 && <UserPlaylistTable type="playlist" data={playlist} columns={playlist_columns} />}
+                <div>
+                    {!isLoading > 0 && (
+                        <>
+                            {playlist.length ? (
+                                <UserPlaylistTable type="playlist" data={playlist} columns={playlist_columns} />
+                            ) : <Loader />
+                            }
+                        </>
+                    )}
+                </div>
+
 
             </header >
         </div >

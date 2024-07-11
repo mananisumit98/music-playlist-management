@@ -28,7 +28,6 @@ const Registration = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(USER_REGISTRATION, data);
-      console.log("response ::::", response.data);
       if (response.data.success) {
         const { access_token, user } = response.data.data
         if (user) {

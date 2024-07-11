@@ -1,28 +1,36 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import axios from 'axios';
 import { toast } from '../utils/constants';
-import { useForm } from "react-hook-form";
-import { Box, Grid, IconButton, TextField } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { EditSharp, DeleteForeverSharp, RemoveRedEyeSharp } from "@mui/icons-material";
-import { DELETE_PLAYLIST, GET_PLAYLIST, NEW_PLAYLIST, FETCH_SONGS, DELETE_SONGS, DELETE_SONG } from "../utils/actionURLs";
+import { DeleteForeverSharp, RemoveRedEyeSharp, CloseOutlined } from "@mui/icons-material";
+import { FETCH_SONGS, DELETE_SONG } from "../utils/actionURLs";
 import UserPlaylistTable from "./playListTable";
 import Swal from "sweetalert2";
-import { useNavigate, useParams } from "react-router-dom";
-import { DASHBOARD, PLAYLIST, SEARCH } from "../utils/routes";
+import { useParams } from "react-router-dom";
+import Navigation from "./Navigation";
+import { Modal } from "@mui/base";
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 const Dashboard = () => {
 
-    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
-    const userDetails = JSON.parse(localStorage.getItem("user"));
-    const inputRef = useRef(null);
-    const navigate = useNavigate();
     const params = useParams();
     const { id: playlist_id } = params;
 
     const [songs, setSongs] = useState([]);
-    console.log("songs ::: ", songs);
+    const [open, setOpen] = useState(false);
+    const [currentRow, setCurrentRow] = useState([]);
 
     useEffect(() => {
         fetchSongs();
@@ -35,7 +43,6 @@ const Dashboard = () => {
             const response = await axios.get(url);
 
             if (response.data.success) {
-                reset();
                 setSongs(response.data.data);
             } else {
                 setSongs([]);
@@ -50,7 +57,24 @@ const Dashboard = () => {
         fetchSongs();
     }
 
-    const handleAdd = async (row) => {
+    const handleAdd = async (row, action) => {
+        if (action === "view") {
+            setOpen(true);
+            setCurrentRow(row);
+            return;
+        } else if (action === "delete") {
+            deleteSong(row);
+        }
+
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+        setCurrentRow([]);
+
+    }
+
+    const deleteSong = (row) => {
         try {
 
             Swal.fire({
@@ -66,13 +90,12 @@ const Dashboard = () => {
                     let url = DELETE_SONG.replace(":id", row._id);
 
                     const response = await axios.delete(url);
-                    console.log("response.data ::: ", response.data);
 
                     if (response.data.success) {
                         refresh();
                         Swal.fire({
-                            title: "Deleted!",
-                            text: "Your playlist has been deleted.",
+                            title: response.data.message,
+                            text: "The song is deleted from the playlist.",
                             icon: "success"
                         });
                     } else {
@@ -115,6 +138,12 @@ const Dashboard = () => {
             renderCell: (params) => (
                 <div>
                     <IconButton
+                        onClick={() => handleAdd(params.row, "view")}
+                        title="View details"
+                    >
+                        <RemoveRedEyeSharp className="action-icon" color="success" />
+                    </IconButton>
+                    <IconButton
                         onClick={() => handleAdd(params.row, "delete")}
                         title="Delete Song"
                     >
@@ -128,21 +157,36 @@ const Dashboard = () => {
     return (
         <div className="App">
             <header className="App-header">
-                <Box style={{ margin: "1% 0" }}>
-                    <Grid item xs={12}>
-                        <Button
-                            type="button"
-                            fullWidth
-                            variant="contained"
-                            onClick={() => navigate(DASHBOARD)}
-                            sx={{ mt: 1, mb: 2 }}
-                        >
-                            Back to dashboard
-                        </Button>
-                    </Grid>
-                </Box>
+
+                <Navigation from="song" />
 
                 {songs.length > 0 && <UserPlaylistTable type="songs" data={songs} columns={song_columns} />}
+
+                <Modal open={open} onClose={handleClose}>
+                    <Box sx={style}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Typography variant="h6" component="h2">
+                                {currentRow.name}
+                            </Typography>
+                            <IconButton onClick={handleClose}>
+                                <CloseOutlined />
+                            </IconButton>
+                        </Box>
+                        <Typography sx={{ mt: 2 }}>
+                            Album: {currentRow.album}
+                        </Typography>
+                        <Typography>
+                            Artist: {currentRow.artist}
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2 }}>
+                            {currentRow.images?.map((image, index) => (
+                                <Box key={index} sx={{ flex: '1 0 21%', m: 1 }}>
+                                    <img src={image} alt={`${currentRow.album} ${index}`} style={{ width: '100%', borderRadius: '8px' }} />
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+                </Modal>
 
             </header >
         </div >

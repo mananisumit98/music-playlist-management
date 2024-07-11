@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import axios from 'axios';
 import { AUTH_ENDPOINT, CLIENT_ID, REDIRECT_URI, RESPONSE_TYPE, toast } from '../utils/constants';
 import { useForm } from "react-hook-form";
@@ -9,18 +9,22 @@ import { AddCircle } from "@mui/icons-material";
 import { ADD_SONGS, GET_PLAYLIST } from "../utils/actionURLs";
 import UserPlaylistTable from "./playListTable";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
-import { DASHBOARD, } from "../utils/routes";
+import Navigation from "./Navigation";
+import Loader from "./Loader";
 
 const SearchSongs = () => {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const userDetails = JSON.parse(localStorage.getItem("user"));
-    const navigate = useNavigate();
 
     const [tracks, setTracks] = useState([]);
     const [playlist, setPlaylist] = useState([]);
     const [token, setToken] = useState("");
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
+    // Loading State
+    const [isLoading, setIsLoading] = useState(false);
+    const [pastSearch, setPastSearch] = useState(null);
 
     useEffect(() => {
         const hash = window.location.hash;
@@ -33,13 +37,22 @@ const SearchSongs = () => {
             window.localStorage.setItem("spotify_token", token)
         }
 
-        setToken(token);
+        if (token) {
+            setToken(token);
+            setIsAuthorized(true);
+        }
         fetchPlayList();
 
     }, []);
 
     const onSubmit = async (data) => {
         try {
+
+            if (data.search === pastSearch) {
+                return false;
+            }
+
+            setIsLoading(true);
 
             let spotify_token = localStorage.getItem("spotify_token");
 
@@ -53,22 +66,18 @@ const SearchSongs = () => {
                 }
             })
 
-            // const formattedData = data.tracks.items.map(track => {
-            //     return {
-            //         name: track.name,
-            //         album: track.album.name,
-            //         artist: track.artists.map(artist => artist.name).join(', '),
-            //         images: track.album.images.map(image => image.url).join(', ')
-            //     };
-            // });
-
             setTracks(track_response.tracks.items);
+            setPastSearch(data.search);
+            setIsLoading(false);
 
         } catch (error) {
             if (error.response.data.error.message === "The access token expired") {
                 localStorage.removeItem("spotify_token");
+                setToken("");
+                setIsAuthorized(false);
             }
             reset();
+            setIsLoading(false);
             console.log("error ::", error);
             toast(error.response.data.error.message, "error");
         }
@@ -76,9 +85,15 @@ const SearchSongs = () => {
     const fetchPlayList = async (data) => {
         try {
 
+            setIsLoading(true);
+
             let url = GET_PLAYLIST.replace(":id", userDetails?._id);
 
-            const response = await axios.get(url);
+            const response = await axios.get(url, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("user_token")}`
+                }
+            });
 
             if (response.data.success) {
                 reset();
@@ -86,18 +101,15 @@ const SearchSongs = () => {
             } else {
                 setPlaylist([]);
             }
+            setIsLoading(false);
         } catch (error) {
+            setIsLoading(false);
             console.log("error ::", error);
             toast(error.message, "error");
         }
     }
 
-    const refresh = () => {
-        fetchPlayList();
-    }
-
     const handleAdd = (row) => {
-        console.log("INNNNNNNNNNNNNNNNNNNNNN", row, playlist);
         const dropdownOptions = playlist?.map(option => `<option value="${option._id}">${option.name}</option>`).join('');
 
         Swal.fire({
@@ -115,8 +127,9 @@ const SearchSongs = () => {
             cancelButtonColor: "#d33",
             confirmButtonText: "Add Song!"
         }).then(async (result) => {
-            console.log("result :::: ", result);
             if (result.isConfirmed) {
+
+                setIsLoading(true);
 
                 const selectElement = document.getElementById('playlist_id');
                 const selectedValue = selectElement.value;
@@ -132,7 +145,11 @@ const SearchSongs = () => {
                     song_id: row.id
                 };
 
-                const response = await axios.post(ADD_SONGS, formData);
+                const response = await axios.post(ADD_SONGS, formData, {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("user_token")}`
+                    }
+                });
 
                 if (response.data.success) {
                     toast(response.data.message, "success");
@@ -140,6 +157,7 @@ const SearchSongs = () => {
                     toast(response.data.message, "error");
                 }
 
+                setIsLoading(false);
 
             }
         });
@@ -214,7 +232,7 @@ const SearchSongs = () => {
     return (
         <div className="App">
             <header className="App-header">
-                {!token ?
+                {!isAuthorized ?
                     <Button
                         type="submit"
                         fullWidth
@@ -226,7 +244,10 @@ const SearchSongs = () => {
                     </Button>
                     :
                     <>
-                        <Box style={{ margin: "1% 0" }}>
+
+                        <Navigation from="search" />
+
+                        <Box style={{ margin: "1% 0", minWidth: "30%" }}>
                             <Grid item xs={12}>
                                 <TextField
                                     required
@@ -251,19 +272,12 @@ const SearchSongs = () => {
                                 >
                                     Search Songs
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    onClick={() => navigate(DASHBOARD)}
-                                    variant="contained"
-                                    sx={{ mt: 1, mb: 2 }}
-                                >
-                                    Back to playlist
-                                </Button>
                             </Grid>
                         </Box>
 
-                        {tracks.length > 0 && <UserPlaylistTable data={tracks} columns={tracks_columns} />}
+                        {!isLoading ? (<>
+                            {tracks.length > 0 && <UserPlaylistTable data={tracks} columns={tracks_columns} />}
+                        </>) : <Loader />}
 
                     </>
                 }
