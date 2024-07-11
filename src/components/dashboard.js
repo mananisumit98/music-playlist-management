@@ -14,13 +14,23 @@ import { PLAYLIST } from "../utils/routes";
 import Navigation from "./Navigation";
 import Loader from "./Loader";
 
+/*
+ - Dashboard is the component where the logged In user can see the list of Playlist they have created.
+ - They can also Create new Playlist from the Dashbhoard. Update the name of the Playlist or they can delete the playlist from the dashboard itself.
+ - User can view the songs that where added into the individual playlist. 
+ - Also I have user react-hook-form for validation
+*/
+
 const Dashboard = () => {
 
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
     const userDetails = JSON.parse(localStorage.getItem("user"));
-    const inputRef = useRef(null);
     const navigate = useNavigate();
 
+    // Input was was used to focus the textbox when user try to update the playlist name
+    const inputRef = useRef(null);
+
+    // States
     const [playlist, setPlaylist] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false);
     const [updateId, setUpdateId] = useState(null);
@@ -30,6 +40,7 @@ const Dashboard = () => {
         fetchPlayList();
     }, []);
 
+    // OnSubmit will work to create a new playlist as well as update an existing playlist
     const onSubmit = async (data) => {
         try {
 
@@ -74,6 +85,8 @@ const Dashboard = () => {
             toast(error.message, "error");
         }
     }
+
+    // Fetch playlist will fetch all the playlist using user_id of the LoggedIn user
     const fetchPlayList = async (data) => {
         try {
 
@@ -107,6 +120,7 @@ const Dashboard = () => {
         setValue("playlist_name", "");
     }
 
+    // HavdAdd function is a shared function who will handle the activities of view, edit and delete buttons.
     const handleAdd = (row, action) => {
         if (action === "update") {
             updatePlaylist(row);
@@ -167,6 +181,7 @@ const Dashboard = () => {
         }
     }
 
+    // This are playlist columns used to show columns and data into the DataTable
     const playlist_columns = [
         {
             field: "name",
@@ -213,7 +228,10 @@ const Dashboard = () => {
     return (
         <div className="App">
             <header className="App-header">
+                {/* Navigation Bar is create for user to navigate to the Search Song Component */}
                 <Navigation from="dashboard" />
+
+                {/* Box component for TextBox and Submit button to create/update the paylist */}
                 <Box style={{ margin: "1% 0", minWidth: "30%" }}>
                     <Grid item xs={12}>
                         <TextField
@@ -243,6 +261,7 @@ const Dashboard = () => {
                     </Grid>
                 </Box>
 
+                {/* The Table will only load if user has create atleadt 1 playlist in the past */}
                 <div>
                     {!isLoading > 0 && (
                         <>

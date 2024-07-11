@@ -11,6 +11,14 @@ import { useParams } from "react-router-dom";
 import Navigation from "./Navigation";
 import { Modal } from "@mui/base";
 
+/*
+ - In the playlist component, the user can see the list of songs that where added into the individual playlist.
+ - The user can see the details of the songs in the Modal Popup by clicking in the view button
+ - The user can also delete the song from the playlist.
+ - The user can navigate to playlist or searching songs directly using navigation bar on the top of the component. 
+*/
+
+// Style component fix the position of the Modal Popup
 const style = {
     position: 'absolute',
     top: '50%',
@@ -25,6 +33,7 @@ const style = {
 
 const Dashboard = () => {
 
+    // Used to fetch playlist ID from the Route
     const params = useParams();
     const { id: playlist_id } = params;
 
@@ -35,6 +44,8 @@ const Dashboard = () => {
     useEffect(() => {
         fetchSongs();
     }, []);
+
+    // Songs are fetched using playlistID and displayed into the Datatable.
     const fetchSongs = async (data) => {
         try {
 
@@ -57,6 +68,7 @@ const Dashboard = () => {
         fetchSongs();
     }
 
+    // HandleAdd function will work conditionally to view or delete the song.
     const handleAdd = async (row, action) => {
         if (action === "view") {
             setOpen(true);
@@ -111,6 +123,7 @@ const Dashboard = () => {
         }
     }
 
+    // Songs are displayed in the Datatable
     const song_columns = [
         {
             field: "name",
@@ -162,6 +175,7 @@ const Dashboard = () => {
 
                 {songs.length > 0 && <UserPlaylistTable type="songs" data={songs} columns={song_columns} />}
 
+                {/* Modal to shoe song details in the popup */}
                 <Modal open={open} onClose={handleClose}>
                     <Box sx={style}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
