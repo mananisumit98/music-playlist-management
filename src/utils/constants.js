@@ -3,7 +3,8 @@ import Swal from "sweetalert2";
 export const CLIENT_ID = '307c7b766f704a5ba98490cf18bcb9e9';
 export const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 export const RESPONSE_TYPE = "token";
-export const REDIRECT_URI = "http://localhost:3000/search";
+export const REDIRECT_URI = "https://music-playlist-client.vercel.app/search";
+// export const REDIRECT_URI = "http://localhost:3000/search";
 
 // Regex for Email Address.
 export const emailRegx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
