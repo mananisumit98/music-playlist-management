@@ -217,11 +217,15 @@ const Dashboard = () => {
                             Artist: {currentRow.artist}
                         </Typography>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2 }}>
-                            {currentRow.images?.map((image, index) => (
-                                <Box key={index} sx={{ flex: '1 0 21%', m: 1 }}>
-                                    <img src={image} alt={`${currentRow.album} ${index}`} style={{ width: '100%', borderRadius: '8px' }} />
-                                </Box>
-                            ))}
+                            {
+                                (currentRow.images && currentRow.images.length > 0) && (
+                                    <img
+                                        src={currentRow.images[0]}
+                                        alt={currentRow.album || 'Album Image'}
+                                        style={{ width: '100%', borderRadius: '8px' }}
+                                    />
+                                )
+                            }
                         </Box>
                     </Box>
                 </Modal>
