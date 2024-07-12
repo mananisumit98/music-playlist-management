@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import Navigation from "./Navigation";
 import { Modal } from "@mui/base";
 import Loader from "./Loader";
+import zIndex from "@mui/material/styles/zIndex";
 
 /*
  - In the playlist component, the user can see the list of songs that where added into the individual playlist.
@@ -22,14 +23,18 @@ import Loader from "./Loader";
 // Style component fix the position of the Modal Popup
 const style = {
     position: 'absolute',
-    top: '50%',
+    top: '62%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: "30%",
+    height: "90%",
+    minHeight: "80vh",
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    overflow: "scroll",
+    zIndex: 100
 };
 
 const Dashboard = () => {
@@ -201,7 +206,7 @@ const Dashboard = () => {
 
                 {/* Modal to shoe song details in the popup */}
                 <Modal open={open} onClose={handleClose}>
-                    <Box sx={style}>
+                    <Box className="popup-model" sx={style}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="h6" component="h2">
                                 {currentRow.name}
@@ -213,10 +218,10 @@ const Dashboard = () => {
                         <Typography sx={{ mt: 2 }}>
                             Album: {currentRow.album}
                         </Typography>
-                        <Typography>
+                        <Typography sx={{ mt: 2 }}>
                             Artist: {currentRow.artist}
                         </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2 }}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 3 }}>
                             {
                                 (currentRow.images && currentRow.images.length > 0) && (
                                     <img

@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
-const Registration = ({ authType = "login" }) => {
+const AuthenticateUser = ({ authType = "login" }) => {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const navigate = useNavigate();
@@ -149,4 +149,4 @@ const Registration = ({ authType = "login" }) => {
   );
 }
 
-export default Registration;
+export default AuthenticateUser;

@@ -5,8 +5,6 @@ import PublicRoute from "./utils/publicRoutes";
 import PrivateRoute from "./utils/privateRoute";
 import Dashboard from "./components/dashboard";
 import AuthenticateUser from "./components/AuthenticateUser";
-import Login from "./components/login";
-import Registration from "./components/registration";
 import SearchSongs from "./components/searchSongs";
 import Playlist from "./components/playlist";
 import './App.css';
