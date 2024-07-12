@@ -9,22 +9,26 @@ import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { DASHBOARD, SIGNIN } from '../utils/routes';
+import { DASHBOARD, SIGNIN, SIGNUP } from '../utils/routes';
 import { useForm } from "react-hook-form";
 import { passwordRegx, toast } from '../utils/constants';
-import { USER_REGISTRATION } from '../utils/actionURLs';
+import { USER_REGISTRATION, USER_LOGIN } from '../utils/actionURLs';
 import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
-const Registration = () => {
+const Registration = ({ authType = "login" }) => {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const actionURL = authType === "login" ? USER_LOGIN : USER_REGISTRATION;
+  const navigateText = authType === "login" ? "Don't have an account? Sign Up" : "Already have an account? Sign in";
+  const navigateURL = authType === "login" ? SIGNUP : SIGNIN;
+
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(USER_REGISTRATION, data);
+      const response = await axios.post(actionURL, data);
       if (response.data.success) {
         const { access_token, user } = response.data.data;
         if (user) {
@@ -58,10 +62,10 @@ const Registration = () => {
         >
           <img src='./logo517.png' height={'150px'} />
           <Typography component="h1" variant="h5">
-            Sign up
+            {authType === "login" ? "Sign in" : "Sign up"}
           </Typography>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
+            <Grid container spacing={0}>
               <Grid item xs={12}>
                 <TextField
                   margin="normal"
@@ -127,14 +131,14 @@ const Registration = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 2, mb: 2 }}
             >
-              Sign Up
+              {authType === "login" ? "Sign in" : "Sign up"}
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href={SIGNIN} variant="body2">
-                  Already have an account? Sign in
+                <Link href={navigateURL} variant="body2">
+                  {navigateText}
                 </Link>
               </Grid>
             </Grid>

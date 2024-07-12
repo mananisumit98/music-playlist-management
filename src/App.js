@@ -4,6 +4,7 @@ import { SIGNUP, SIGNIN, DASHBOARD, SEARCH, PLAYLIST } from "./utils/routes";
 import PublicRoute from "./utils/publicRoutes";
 import PrivateRoute from "./utils/privateRoute";
 import Dashboard from "./components/dashboard";
+import AuthenticateUser from "./components/AuthenticateUser";
 import Login from "./components/login";
 import Registration from "./components/registration";
 import SearchSongs from "./components/searchSongs";
@@ -18,8 +19,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={<PublicRoute />}>
-            <Route path={SIGNIN} element={<Login />} />
-            <Route path={SIGNUP} element={<Registration />} />
+            <Route path={SIGNIN} element={<AuthenticateUser authType="login" />} />
+            <Route path={SIGNUP} element={<AuthenticateUser authType="register" />} />
             <Route path="/" element={<Navigate to={SIGNIN} replace />} />
             <Route path="*" element={<Navigate to={SIGNIN} replace />} />
           </Route>
