@@ -187,7 +187,7 @@ const Dashboard = () => {
             field: "name",
             headerName: "Playlist Name",
             flex: 1,
-            minWidth: 300,
+            minWidth: 100,
             valueFormatter: (params) => {
                 if (params) {
                     return params
@@ -199,7 +199,7 @@ const Dashboard = () => {
             field: "actions",
             headerName: "Actions",
             flex: 1,
-            minWidth: 300,
+            minWidth: 100,
             renderCell: (params) => (
                 <div>
                     <IconButton
@@ -262,7 +262,7 @@ const Dashboard = () => {
                 </Box>
 
                 {/* The Table will only load if user has create atleadt 1 playlist in the past */}
-                <div>
+                <div className="dashboard-table">
                     {!isLoading ? (
                         <>
                             {playlist.length ? (

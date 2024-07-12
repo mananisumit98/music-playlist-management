@@ -11,7 +11,6 @@ import UserPlaylistTable from "./playListTable";
 import Swal from "sweetalert2";
 import Navigation from "./Navigation";
 import Loader from "./Loader";
-import { maxHeight, maxWidth } from "@mui/system";
 
 /*
  - Search Songs is the component where user can search the list of Songs directly from the Spotify.
@@ -181,16 +180,10 @@ const SearchSongs = () => {
     // Tracks columns are used to display columns Header and their values into the DataTable
     const tracks_columns = [
         {
-            field: "id",
-            headerName: "Song ID",
-            flex: 0.5,
-            minWidth: 250,
-        },
-        {
             field: "name",
             headerName: "Song Name",
-            flex: 0.5,
-            minWidth: 115,
+            flex: 1,
+            minWidth: 150,
             valueFormatter: (params) => {
                 if (params) {
                     return params
@@ -201,8 +194,8 @@ const SearchSongs = () => {
         {
             field: "album",
             headerName: "Album",
-            flex: 1,
-            minWidth: 250,
+            flex: 2,
+            minWidth: 150,
             valueFormatter: (params) => {
                 if (params) {
                     return params.name
@@ -213,8 +206,8 @@ const SearchSongs = () => {
         {
             field: "artists",
             headerName: "Artist",
-            flex: 1,
-            minWidth: 200,
+            flex: 2,
+            minWidth: 150,
             valueFormatter: (params) => {
                 if (params) {
                     return params.map(artist => artist.name).join(', ');
@@ -225,8 +218,8 @@ const SearchSongs = () => {
         {
             field: "actions",
             headerName: "Actions",
-            flex: 1,
-            minWidth: 150,
+            flex: 0.5,
+            minWidth: 100,
             renderCell: (params) => (
                 <div>
                     <IconButton
@@ -253,7 +246,7 @@ const SearchSongs = () => {
                 {!isAuthorized ?
                     <>
                         <Box >
-                            <img src="https://www.pngmart.com/files/22/Spotify-Logo-PNG-HD-Isolated.png" style={{ width: "30%", height: "30%" }} />
+                            <img src="./spotify-logo.png" style={{ width: "30%", height: "30%" }} />
                         </Box>
                         <Button
                             type="submit"
@@ -295,23 +288,24 @@ const SearchSongs = () => {
                                 </Button>
                             </Grid>
                         </Box>
-
-                        {!isLoading ? (
-                            <>
-                                {tracks.length > 0 ? (
-                                    <UserPlaylistTable
-                                        data={tracks}
-                                        columns={tracks_columns}
-                                    />) : (
-                                    <Box sx={{ mt: 2 }}>
-                                        <Typography variant="h5" component="h2" color="GrayText">
-                                            Happy Searching !!! 😃
-                                        </Typography>
-                                    </Box>
-                                )}
-                            </>
-                        ) : <Loader />
-                        }
+                        <div className="search-table">
+                            {!isLoading ? (
+                                <>
+                                    {tracks.length > 0 ? (
+                                        <UserPlaylistTable
+                                            data={tracks}
+                                            columns={tracks_columns}
+                                        />) : (
+                                        <Box sx={{ mt: 2 }}>
+                                            <Typography variant="h5" component="h2" color="GrayText">
+                                                Happy Searching !!! 😃
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </>
+                            ) : <Loader />
+                            }
+                        </div>
 
                     </>
                 }

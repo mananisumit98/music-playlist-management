@@ -4,7 +4,7 @@ import React from 'react'
 
 const PlayListTable = ({ data, columns, type }) => {
     return (
-        <Card style={{ marginTop: "10px 0", minWidth: "30%" }}>
+        <Card style={{ marginTop: "10px 0" }}>
             <DataGrid
                 className="project-list"
                 autoHeight

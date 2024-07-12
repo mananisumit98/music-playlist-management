@@ -136,26 +136,26 @@ const Dashboard = () => {
         {
             field: "name",
             headerName: "Song Name",
-            flex: 0.5,
-            minWidth: 115
+            flex: 1,
+            minWidth: 125
         },
         {
             field: "album",
             headerName: "Album",
             flex: 1,
-            minWidth: 250
+            minWidth: 90
         },
         {
             field: "artist",
             headerName: "Artist",
-            flex: 1,
-            minWidth: 200
+            flex: 2,
+            minWidth: 150
         },
         {
             field: "actions",
             headerName: "Actions",
             flex: 1,
-            minWidth: 150,
+            minWidth: 75,
             renderCell: (params) => (
                 <div>
                     <IconButton
@@ -181,21 +181,23 @@ const Dashboard = () => {
 
                 <Navigation from="song" />
 
-                {!isLoading ? (
-                    <>
-                        {songs.length > 0 ?
-                            <UserPlaylistTable
-                                type="songs"
-                                data={songs}
-                                columns={song_columns}
-                            /> :
-                            <Box sx={{ mt: 2 }}>
-                                <Typography variant="h5" component="h2" color="GrayText">
-                                    Please add songs in the playlist
-                                </Typography>
-                            </Box>
-                        }</>
-                ) : <Loader />}
+                <div className="playlist-table">
+                    {!isLoading ? (
+                        <>
+                            {songs.length > 0 ?
+                                <UserPlaylistTable
+                                    type="songs"
+                                    data={songs}
+                                    columns={song_columns}
+                                /> :
+                                <Box sx={{ mt: 2 }}>
+                                    <Typography variant="h5" component="h2" color="GrayText">
+                                        Please add songs in the playlist
+                                    </Typography>
+                                </Box>
+                            }</>
+                    ) : <Loader />}
+                </div>
 
                 {/* Modal to shoe song details in the popup */}
                 <Modal open={open} onClose={handleClose}>
